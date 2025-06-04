@@ -1,35 +1,49 @@
-import { Controller } from "@nestjs/common";
-import { MessagePattern, Payload } from "@nestjs/microservices";
-import { UsersService } from "./users.service";
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Inject,
+} from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { ClientProxy } from "@nestjs/microservices";
+import { USERS_SERVICE } from "src/config";
 
-@Controller()
+@Controller("users")
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    @Inject(USERS_SERVICE) private readonly usersService: ClientProxy,
+  ) {}
 
-  @MessagePattern({ cmd: "createUser" })
-  create(@Payload() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @Post()
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.send({ cmd: "createUser" }, createUserDto);
   }
 
-  @MessagePattern({ cmd: "findAllUsers" })
+  @Get()
   findAll() {
-    return this.usersService.findAll();
+    return this.usersService.send({ cmd: "findAllUsers" }, {});
   }
 
-  @MessagePattern({ cmd: "findOneUser" })
-  findOne(@Payload() id: number) {
-    return this.usersService.findOne(id);
+  @Get(":id")
+  findOne(@Param("id") id: string) {
+    return this.usersService.send({ cmd: "findOneUser" }, { id: +id });
   }
 
-  @MessagePattern("updateUser")
-  update(@Payload() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(updateUserDto.id, updateUserDto);
+  @Patch(":id")
+  update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.send(
+      { cmd: "updateUser" },
+      { id: +id, ...updateUserDto },
+    );
   }
 
-  @MessagePattern({ cmd: "removeUser" })
-  remove(@Payload() id: number) {
-    return this.usersService.remove(id);
+  @Delete(":id")
+  remove(@Param("id") id: string) {
+    return this.usersService.send({ cmd: "removeUser" }, { id: +id });
   }
 }

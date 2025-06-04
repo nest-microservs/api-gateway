@@ -1,0 +1,19 @@
+services:
+  pg_microservices:
+    image: postgres:17.2
+    container_name: pg_microservices
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=rootPassword
+      - POSTGRES_DB=postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - pg_microservices:/var/lib/postgresql/data
+
+volumes:
+  pg_microservices:
+
+networks:
+  microservices:
+    driver: bridge

@@ -8,6 +8,10 @@ interface EnvVars {
   JWT_EXPIRATION: string;
   JWT_REFRESH_SECRET: string;
   JWT_REFRESH_EXPIRATION: string;
+  USERS_SERVICES_HOST: string;
+  USERS_SERVICES_PORT: number;
+  BINANCE_SERVICES_HOST: string;
+  BINANCE_SERVICES_PORT: number;
 }
 
 const envSchema = joi
@@ -18,6 +22,10 @@ const envSchema = joi
     JWT_EXPIRATION: joi.string().required(),
     JWT_REFRESH_SECRET: joi.string().required(),
     JWT_REFRESH_EXPIRATION: joi.string().required(),
+    USERS_SERVICES_HOST: joi.string().required(),
+    USERS_SERVICES_PORT: joi.number().required(),
+    BINANCE_SERVICES_HOST: joi.string().required(),
+    BINANCE_SERVICES_PORT: joi.number().required(),
   })
   .unknown(true);
 
@@ -39,4 +47,8 @@ export const envs = {
   jwtExpiration: envVars.JWT_EXPIRATION,
   jwtRefreshSecret: envVars.JWT_REFRESH_SECRET,
   jwtRefreshExpiration: envVars.JWT_REFRESH_EXPIRATION,
+  usersServiceHost: envVars.USERS_SERVICES_HOST,
+  usersServicePort: envVars.USERS_SERVICES_PORT,
+  binanceServiceHost: envVars.BINANCE_SERVICES_HOST,
+  binanceServicePort: envVars.BINANCE_SERVICES_PORT,
 };
