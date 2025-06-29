@@ -13,52 +13,56 @@ import { UpdateBinanceIntegrationDto } from "./dto/update-binance-integration.dt
 import { ClientProxy } from "@nestjs/microservices";
 import { BINANCE_INTEGRATIONS_SERVICE } from "src/config";
 
-@Controller("binance-integrations")
+@Controller("binance")
 export class BinanceIntegrationsController {
   constructor(
     @Inject(BINANCE_INTEGRATIONS_SERVICE)
     private readonly binanceIntegrationsService: ClientProxy,
   ) {}
 
-  @Post()
-  create(@Body() createBinanceIntegrationDto: CreateBinanceIntegrationDto) {
-    return this.binanceIntegrationsService.send(
-      { cmd: "createBinanceIntegration" },
-      createBinanceIntegrationDto,
-    );
+  /* Spot */
+  @Get("spot/getPriceTicker")
+  getPriceTicker() {
+    return this.binanceIntegrationsService.send({ cmd: "getPriceTicker" }, {});
   }
 
-  @Get()
-  findAll() {
-    return this.binanceIntegrationsService.send({ cmd: "findAllBinanceIntegrations" },
-      {},
-    );
+  @Get("spot/get24hrTicker")
+  get24hrTicker() {
+    return this.binanceIntegrationsService.send({ cmd: "get24hrTicker" }, {});
   }
 
-  @Get(":id")
+  @Get("spot/:id")
   findOne(@Param("id") id: string) {
-    return this.binanceIntegrationsService.send(
-      { cmd: "findOneBinanceIntegration" },
-      { id: +id },
-    );
+    return this.binanceIntegrationsService.send("findOneSpot", { id: +id });
   }
 
-  @Patch(":id")
+  @Patch("spot/:id")
   update(
     @Param("id") id: string,
     @Body() updateBinanceIntegrationDto: UpdateBinanceIntegrationDto,
   ) {
+    return this.binanceIntegrationsService.send("updateSpot", {
+      id: +id,
+      ...updateBinanceIntegrationDto,
+    });
+  }
+
+  @Delete("spot/:id")
+  remove(@Param("id") id: string) {
+    return this.binanceIntegrationsService.send("removeSpot", { id: +id });
+  }
+
+  /* Wallet */
+  @Get("wallet/getWalletBalance")
+  getWalletBalance() {
     return this.binanceIntegrationsService.send(
-      { cmd: "updateBinanceIntegration" },
-      { id: +id, ...updateBinanceIntegrationDto },
+      { cmd: "getWalletBalance" },
+      {},
     );
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.binanceIntegrationsService.send(
-      { cmd: "removeBinanceIntegration" },
-      { id: +id },
-    );
+  @Get("wallet/getAllCoinsInfo")
+  getAllCoinsInfo() {
+    return this.binanceIntegrationsService.send({ cmd: "getAllCoinsInfo" }, {});
   }
 }
